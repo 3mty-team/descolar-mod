@@ -1,5 +1,9 @@
-.env
-
+# Composer files
+/vendor
 composer.lock
 
-vendor
+#IDE files
+.idea
+
+# Environment file
+.env
