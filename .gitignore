@@ -1,9 +1,11 @@
 # Composer files
 /vendor
 composer.lock
+/var/
 
 #IDE files
 .idea
 
 # Environment file
 .env
+
