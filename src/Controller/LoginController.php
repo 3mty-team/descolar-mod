@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -15,16 +16,13 @@ class LoginController extends AbstractController
     #[Route('/', name: 'login')]
     public function index($error = null): Response
     {
-        session_start();
-
         return $this->render('login.html.twig', [
-            'controller_name' => 'LoginController',
             'error' => $error
         ]);
     }
 
     #[Route('/connexion', name: 'connexion')]
-    public function testConnexion(EntityManagerInterface $entityManager): Response
+    public function testConnexion(EntityManagerInterface $entityManager, Request $request): Response
     {
         $username = htmlspecialchars($_POST['username']);
         $password = htmlspecialchars($_POST['password']);
@@ -37,10 +35,21 @@ class LoginController extends AbstractController
         if (!is_null($user)) {
             $areCredentialsCorrect = $loginRepository->testLogin($user, $password);
             if ($areCredentialsCorrect) {
-                $_SESSION['username'] = $user->getUsername();
+                $session = $request->getSession();
+                $session->set('username', $user->getUsername());
+
                 return $this->redirectToRoute('home');
             }
         }
         return $this->index("Nom d'utilisateur ou mot de passe incorrects !");
+    }
+
+    #[Route('/logout', name: 'logout')]
+    public function logout(Request $request): Response
+    {
+        $session = $request->getSession();
+        $session->remove('username');
+
+        return $this->redirectToRoute('login');
     }
 }

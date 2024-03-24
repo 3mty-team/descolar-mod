@@ -120,7 +120,7 @@ button:focus {
   border-radius: 0;
   padding-top: 10px;
   padding-bottom: 10px;
-  min-width: auto;
+  min-width: 100%;
 }
 .dropdown-item {
   color: #fff;
@@ -128,7 +128,7 @@ button:focus {
 }
 .navbar-nav .active > .nav-link,
 .navbar-nav .nav-link.active {
-  background-color: #f5a623;
+  background-color: #8B1538;
   color: #fff;
 }
 .navbar-nav .nav-link.active i {
@@ -136,17 +136,25 @@ button:focus {
 }
 .dropdown-item:focus,
 .dropdown-item:hover {
-  background-color: #567086;
+  background-color: #8B1538;
+  color:#fff!important;
 }
 .navbar-nav a:hover,
 .navbar-nav a:hover i {
-  color: #f5a623;
+  color: #fff;
 }
 .nav-item {
   text-align: center;
 }
+.nav-item:hover{
+  background-color: #8B1538;
+  color:#fff !important;
+}
 .nav-item:last-child {
   margin-right: 0;
+}
+.logout{
+  background-color: #567086!important;
 }
 .dropdown-toggle::after {
   display: none;
@@ -193,7 +201,7 @@ button:focus {
   margin-bottom: 0;
 }
 .tm-notification-link {
-  color: #f5a623;
+  color: #8B1538;
 }
 .tm-text-color-secondary {
   color: #bdcbd8;
@@ -299,6 +307,17 @@ thead {
   counter-reset: myOrderedListItemsCounter;
   padding-left: 0;
 }
+.top-container{
+  height: 100px;
+  background-color: #567086;
+  padding: 0;
+}
+.top-container > h1{
+  text-align: center;
+  vertical-align: center;
+  height: 100px;
+  line-height: 100px;
+}
 .tm-list-group > li {
   list-style-type: none;
   position: relative;
@@ -339,16 +358,22 @@ thead {
 }
 .btn-primary {
   color: #fff;
-  background-color: #f5a623;
-  border: 2px solid #f5a623;
+  background-color: #8B1538;
+  border: 2px solid #8B1538;
   font-size: 90%;
   font-weight: 600;
 }
+.btn-login:hover{
+  background-color: #8B1538 !important;
+  color:#fff !important;
+  font-size: larger;
+}
+
 .btn-primary:active,
 .btn-primary:hover {
-  color: #f5a623;
+  color: #8B1538;
   background-color: transparent;
-  border: 2px solid #f5a623;
+  border: 2px solid #8B1538;
 }
 .custom-file-input {
   cursor: pointer;
@@ -543,14 +568,14 @@ input[type="checkbox"]:focus {
   transition: all 0.2s ease;
 }
 .navbar-toggler:hover {
-  border-color: #f5a623;
-  color: #f5a623;
+  border-color: #8B1538;
+  color: #8B1538;
 }
 .tm-nav-icon {
   color: #fff;
 }
 .navbar-toggler:hover .tm-nav-icon {
-  color: #f5a623;
+  color: #8B1538;
 }
 ::-webkit-scrollbar {
   width: 8px;

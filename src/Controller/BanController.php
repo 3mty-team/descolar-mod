@@ -7,9 +7,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class HomeController extends AbstractController
+class BanController extends AbstractController
 {
-    #[Route('/home', name: 'home')]
+    #[Route('/ban', name: 'ban')]
     public function index(Request $request): Response
     {
         $session = $request->getSession();
@@ -18,8 +18,8 @@ class HomeController extends AbstractController
             return $this->redirectToRoute('login');
         }
 
-        return $this->render('index.html.twig', [
-            'username' => $session->get('username')
+        return $this->render('ban.html.twig', [
+            'username' => $request->getSession()->get('username')
         ]);
     }
 }
