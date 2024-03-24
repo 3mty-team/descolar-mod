@@ -56,7 +56,10 @@
 composer.lock
 
 #IDE files
-.idea
+.idea/
 
 # Environment file
 .env
+var/
+
+.xml
