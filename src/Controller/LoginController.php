@@ -24,8 +24,8 @@ class LoginController extends AbstractController
     #[Route('/connexion', name: 'connexion')]
     public function testConnexion(EntityManagerInterface $entityManager, Request $request): Response
     {
-        $username = htmlspecialchars($_POST['username']);
-        $password = htmlspecialchars($_POST['password']);
+        $username = htmlspecialchars($request->get('username'));
+        $password = htmlspecialchars($request->get('password'));
 
         $userRepository = $entityManager->getRepository(User::class);
         $loginRepository = $entityManager->getRepository(Login::class);
