@@ -665,6 +665,9 @@ input[type="checkbox"]:focus {
     padding-left: 15px;
     padding-right: 15px;
   }
+  .fit-picture{
+    width:65%;
+  }
   .navbar-collapse {
     right: 15px;
   }
@@ -731,4 +734,21 @@ input[type="checkbox"]:focus {
   #lineChart {
     max-height: 350px;
   }
+}
+.home-link{
+  color:#fff!important;
+}
+
+.flex-container{
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.link-error, .link-error:hover{
+  color:#fff!important;
+  text-decoration: underline;
+}
+
+.error-content{
+  padding-top:27%;
 }

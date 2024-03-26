@@ -1,0 +1,53 @@
+{# templates/bundles/TwigBundle/Exception/error404.html.twig #}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <link rel="icon" href="{{ asset('images/icon-descolar.ico') }}"/>
+    <title>{% block title %} 404 - Page non trouvée{% endblock %}</title>
+    {% block stylesheets %}
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700"/>
+        <!-- https://fonts.google.com/specimen/Open+Sans -->
+        <link rel="stylesheet" href="{{ asset('styles/fontawesome.min.css') }}"/>
+        <!-- https://fontawesome.com/ -->
+        <link rel="stylesheet" href="{{ asset('styles/bootstrap.min.css') }}"/>
+        <!-- https://getbootstrap.com/ -->
+        <link rel="stylesheet" href="{{ asset('styles/templatemo-style.css') }}">
+    {% endblock %}
+</head>
+
+<body>
+{% block body %}
+    <div class="top-container text-center">
+        <h1 class="tm-site-title text-center align-middle title-404">
+            <a class="home-link" href="/home">
+                Panel d'administration Descolar
+            </a>
+        </h1>
+    </div>
+
+    <h1 class="text-center text-white mt-5 mb-5">Page inconnue !</h1>
+    <div class="flex-container">
+        <img
+                class="fit-picture"
+                src="{{ asset('images/404.svg') }}"
+                alt="404 image"
+        />
+        <div class="error-text">
+            <h2 class="error-content text-white text-center">
+                La page demandée n'existe pas. <br><br>
+                Vérifiez les fautes d'orthographe ou <a class="link-error" href="{{ path('home') }}">retourner à l'accueil</a>.
+            </h2>
+        </div>
+    </div>
+
+
+    <script src="{{ asset('lib/jquery-3.3.1.min.js') }}"></script>
+    <!-- https://jquery.com/download/ -->
+    <script src="{{ asset('lib/bootstrap.min.js') }}"></script>
+    <!-- https://getbootstrap.com/ bootstrap.min.js-->
+{% endblock %}
+</body>
+</html>
