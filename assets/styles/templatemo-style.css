@@ -461,7 +461,7 @@ input[type="checkbox"]:focus {
   min-height: 650px;
 }
 .tm-product-table-container {
-  max-height: 465px;
+  max-height: 645px;
   margin-bottom: 15px;
   overflow-y: scroll;
 }
@@ -510,11 +510,7 @@ input[type="checkbox"]:focus {
   outline: 0;
 }
 .tm-trash-icon {
-  color: #6e6c6c;
   cursor: pointer;
-}
-.tm-trash-icon:hover {
-  color: #9f1321;
 }
 .tm-footer {
   background-color: #567086;
@@ -591,6 +587,9 @@ input[type="checkbox"]:focus {
   background: #8ab5d6;
 }
 
+.tm-footer{
+  margin-top: auto;
+}
 .tm-footer-link {
   color: white;
 }
