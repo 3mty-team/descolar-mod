@@ -5,9 +5,10 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-class User
+class User implements UserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -145,5 +146,22 @@ class User
             . ", Phone : " . (is_null($this->getPhone()) ? "null" : $this->getPhone())
             . ", Creation date : " . $this->getCreationDate()->format('d/m/Y H:i:s')
             . ", Active ? : " . ($this->getIsActive() ? "Yes" : "No");
+    }
+
+    public function getRoles(): array
+    {
+        // TODO: Implement getRoles() method.
+        return [];
+    }
+
+    public function eraseCredentials(): void
+    {
+        // TODO: Implement eraseCredentials() method.
+    }
+
+    public function getUserIdentifier(): string
+    {
+        // TODO: Implement getUserIdentifier() method.
+        return "";
     }
 }

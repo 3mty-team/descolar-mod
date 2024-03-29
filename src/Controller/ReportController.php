@@ -9,7 +9,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ReportController extends AbstractController
 {
-    #[Route('/report-user', name: 'report_user')]
+    #[Route('/report/user', name: 'report_user')]
     public function redirectReportUser(Request $request): Response
     {
         $session = $request->getSession();
@@ -23,7 +23,7 @@ class ReportController extends AbstractController
         ]);
     }
 
-    #[Route('/report-post', name: 'report_post')]
+    #[Route('/report/post', name: 'report_post')]
     public function redirectReportPost(Request $request): Response
     {
         $session = $request->getSession();
@@ -37,7 +37,7 @@ class ReportController extends AbstractController
         ]);
     }
 
-    #[Route('/report-message', name: 'report_message')]
+    #[Route('/report/message', name: 'report_message')]
     public function redirectReportMessage(Request $request): Response
     {
         $session = $request->getSession();
