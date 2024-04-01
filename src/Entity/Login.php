@@ -14,7 +14,7 @@ class Login
     private ?User $user = null;
 
     #[ORM\Id]
-    #[ORM\Column(length: 30)]
+    #[ORM\Column(length: 255)]
     private ?string $password = null;
 
     public function getUser(): ?User

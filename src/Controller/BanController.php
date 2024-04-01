@@ -22,4 +22,13 @@ class BanController extends AbstractController
             'username' => $request->getSession()->get('username')
         ]);
     }
+
+    #[Route('/ban/test', name: 'ban_test')]
+    public function ouai(): Response
+    {
+        return $this->render('ban-test.html.twig', [
+            'controller_name' => 'ban test là',
+            'message' => "ouai"
+        ]);
+    }
 }

@@ -1,27 +1,14 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Report;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class ReportController extends AbstractController
+class MessageReportController extends AbstractController
 {
-    #[Route('/report/user', name: 'report_user')]
-    public function redirectReportUser(Request $request): Response
-    {
-        $session = $request->getSession();
-
-        if ($session->get('username') == null) {
-            return $this->redirectToRoute('login');
-        }
-
-        return $this->render('user-report.html.twig', [
-            'username' => $session->get('username')
-        ]);
-    }
 
     #[Route('/report/post', name: 'report_post')]
     public function redirectReportPost(Request $request): Response
@@ -32,7 +19,7 @@ class ReportController extends AbstractController
             return $this->redirectToRoute('login');
         }
 
-        return $this->render('post-report.html.twig', [
+        return $this->render('report/post-report.html.twig', [
             'username' => $session->get('username')
         ]);
     }
@@ -46,7 +33,7 @@ class ReportController extends AbstractController
             return $this->redirectToRoute('login');
         }
 
-        return $this->render('message-report.html.twig', [
+        return $this->render('report/message-report.html.twig', [
             'username' => $session->get('username')
         ]);
     }
