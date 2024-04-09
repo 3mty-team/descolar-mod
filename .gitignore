@@ -61,5 +61,5 @@ composer.lock
 # Environment file
 .env
 var/
-
+migrations/
 .xml
