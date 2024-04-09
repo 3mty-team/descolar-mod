@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Repository;
+namespace App\Repository\Report;
 
+use App\Entity\Report\UserReport;
 use App\Entity\User;
-use App\Entity\UserReport;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -43,7 +43,7 @@ class UserReportRepository extends ServiceEntityRepository
     {
         $userReport = $this->find($id);
 
-        $userReport->setProcessing(1);
+        $userReport->setTreating(1);
         $userReport->setAdminProcessing($admin);
         $userReport->setBanned($result);
         $userReport->setResultDate(new \DateTime('', new \DateTimeZone('Europe/Paris')));
@@ -60,7 +60,7 @@ class UserReportRepository extends ServiceEntityRepository
     public function findOpenReports(): array
     {
         return $this->findBy(
-            ['processing' => 0]
+            ['treating' => 0]
         );
     }
 

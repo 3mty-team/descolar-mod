@@ -1,23 +1,27 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Report;
 
-use App\Repository\UserReportRepository;
+use App\Entity\User;
+use App\Repository\Report\PostReportRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: UserReportRepository::class)]
-class UserReport
+#[ORM\Entity(repositoryClass: PostReportRepository::class)]
+class PostReport
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\Column]
+    private ?int $post_id = null;
+
     #[ORM\Column(type: Types::GUID)]
     private ?string $user_id = null;
 
-    #[ORM\ManyToOne(cascade: ['persist', 'remove'])]
+    #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private ?ReportCategory $report_category = null;
 
@@ -28,13 +32,19 @@ class UserReport
     private ?string $comment = null;
 
     #[ORM\Column(options: ["default" => 0])]
-    private ?bool $processing = null;
+    private ?bool $treating = null;
 
-    #[ORM\ManyToOne(cascade: ['persist', 'remove'])]
+    #[ORM\ManyToOne]
     private ?User $admin_processing = null;
 
     #[ORM\Column(options: ["default" => 0])]
-    private ?bool $banned = null;
+    private ?bool $ignored = null;
+
+    #[ORM\Column(options: ["default" => 0])]
+    private ?bool $deleted = null;
+
+    #[ORM\Column(options: ["default" => 0])]
+    private ?bool $user_ban = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $result_date = null;
@@ -42,6 +52,18 @@ class UserReport
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getPostId(): ?int
+    {
+        return $this->post_id;
+    }
+
+    public function setPostId(int $post_id): static
+    {
+        $this->post_id = $post_id;
+
+        return $this;
     }
 
     public function getUserId(): ?string
@@ -61,7 +83,7 @@ class UserReport
         return $this->report_category;
     }
 
-    public function setReportCategory(ReportCategory $report_category): static
+    public function setReportCategory(?ReportCategory $report_category): static
     {
         $this->report_category = $report_category;
 
@@ -92,14 +114,14 @@ class UserReport
         return $this;
     }
 
-    public function isProcessing(): ?bool
+    public function isTreating(): ?bool
     {
-        return $this->processing;
+        return $this->treating;
     }
 
-    public function setProcessing(bool $processing): static
+    public function setTreating(bool $treating): static
     {
-        $this->processing = $processing;
+        $this->treating = $treating;
 
         return $this;
     }
@@ -116,14 +138,38 @@ class UserReport
         return $this;
     }
 
-    public function isBanned(): ?bool
+    public function isIgnored(): ?bool
     {
-        return $this->banned;
+        return $this->ignored;
     }
 
-    public function setBanned(bool $banned): static
+    public function setIgnored(bool $ignored): static
     {
-        $this->banned = $banned;
+        $this->ignored = $ignored;
+
+        return $this;
+    }
+
+    public function isDeleted(): ?bool
+    {
+        return $this->deleted;
+    }
+
+    public function setDeleted(bool $deleted): static
+    {
+        $this->deleted = $deleted;
+
+        return $this;
+    }
+
+    public function isUserBan(): ?bool
+    {
+        return $this->user_ban;
+    }
+
+    public function setUserBan(bool $user_ban): static
+    {
+        $this->user_ban = $user_ban;
 
         return $this;
     }
@@ -138,18 +184,5 @@ class UserReport
         $this->result_date = $result_date;
 
         return $this;
-    }
-
-    public function toString(): string
-    {
-        return "Id : " . $this->getId()
-            . ", User : " . $this->getUserId()
-            . ", Category : " . $this->getReportCategory()->getName()
-            . ", Date : " . $this->getDate()->format('d/m/Y H:i:s')
-            . ", Comment : " . (is_null($this->getComment()) ? "null" : $this->getComment())
-            . ", Processing ? : " . ($this->isProcessing() ? "Yes" : "No")
-            . ", Admin : " . (is_null($this->getAdminProcessing()) ? null : $this->getAdminProcessing()->getUsername())
-            . ", Banned ? : " . ($this->isBanned() ? "Yes" : "No")
-            . ", Result date : " . (is_null($this->getResultDate()) ? null : $this->getResultDate()->format('d/m/Y H:i:s'));
     }
 }

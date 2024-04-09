@@ -2,8 +2,8 @@
 
 namespace App\Controller\Report;
 
+use App\Entity\Report\UserReport;
 use App\Entity\User;
-use App\Entity\UserReport;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,7 +29,7 @@ class UserReportController extends AbstractController
         ]);
     }
 
-    #[Route('/ban/user/{id}', name: 'ban_user')]
+    #[Route('/ban/user/{id}', name: 'ban_user_report')]
     public function banUser(EntityManagerInterface $entityManager, Request $request, int $id): Response
     {
         // Get current logged user
@@ -42,7 +42,7 @@ class UserReportController extends AbstractController
         return $this->redirectToRoute('report_user');
     }
 
-    #[Route('/ignore/{id}', name: 'ban_user')]
+    #[Route('/ignore/user/{id}', name: 'ignore_user_report')]
     public function ignoreReport(EntityManagerInterface $entityManager, Request $request, int $id)
     {
         // Get current logged user

@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Report;
 
-use App\Repository\ReportCategoryRepository;
+use App\Entity\UnbanRequest;
+use App\Repository\Report\ReportCategoryRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ReportCategoryRepository::class)]

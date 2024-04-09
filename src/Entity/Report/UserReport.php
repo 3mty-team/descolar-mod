@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Report;
 
-use App\Entity\Report\ReportCategory;
-use App\Repository\UnbanRequestRepository;
+use App\Entity\User;
+use App\Repository\Report\UserReportRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: UnbanRequestRepository::class)]
-class UnbanRequest
+#[ORM\Entity(repositoryClass: UserReportRepository::class)]
+class UserReport
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -18,7 +18,7 @@ class UnbanRequest
     #[ORM\Column(type: Types::GUID)]
     private ?string $user_id = null;
 
-    #[ORM\OneToOne(inversedBy: 'unbanRequest', cascade: ['persist', 'remove'])]
+    #[ORM\ManyToOne(cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?ReportCategory $report_category = null;
 
@@ -28,11 +28,14 @@ class UnbanRequest
     #[ORM\Column(length: 150, nullable: true)]
     private ?string $comment = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\Column(options: ["default" => 0])]
+    private ?bool $treating = null;
+
+    #[ORM\ManyToOne(cascade: ['persist', 'remove'])]
     private ?User $admin_processing = null;
 
     #[ORM\Column(options: ["default" => 0])]
-    private ?bool $unban = null;
+    private ?bool $banned = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $result_date = null;
@@ -90,6 +93,18 @@ class UnbanRequest
         return $this;
     }
 
+    public function isTreating(): ?bool
+    {
+        return $this->treating;
+    }
+
+    public function setTreating(bool $treating): static
+    {
+        $this->treating = $treating;
+
+        return $this;
+    }
+
     public function getAdminProcessing(): ?User
     {
         return $this->admin_processing;
@@ -102,14 +117,14 @@ class UnbanRequest
         return $this;
     }
 
-    public function isUnban(): ?bool
+    public function isBanned(): ?bool
     {
-        return $this->unban;
+        return $this->banned;
     }
 
-    public function setUnban(bool $unban): static
+    public function setBanned(bool $banned): static
     {
-        $this->unban = $unban;
+        $this->banned = $banned;
 
         return $this;
     }
@@ -124,5 +139,18 @@ class UnbanRequest
         $this->result_date = $result_date;
 
         return $this;
+    }
+
+    public function toString(): string
+    {
+        return "Id : " . $this->getId()
+            . ", User : " . $this->getUserId()
+            . ", Category : " . $this->getReportCategory()->getName()
+            . ", Date : " . $this->getDate()->format('d/m/Y H:i:s')
+            . ", Comment : " . (is_null($this->getComment()) ? "null" : $this->getComment())
+            . ", Has the issue been treated yet ? : " . ($this->isTreating() ? "Yes" : "No")
+            . ", Admin : " . (is_null($this->getAdminProcessing()) ? null : $this->getAdminProcessing()->getUsername())
+            . ", Banned ? : " . ($this->isBanned() ? "Yes" : "No")
+            . ", Result date : " . (is_null($this->getResultDate()) ? null : $this->getResultDate()->format('d/m/Y H:i:s'));
     }
 }
