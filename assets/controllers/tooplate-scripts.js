@@ -1,121 +1,87 @@
 const width_threshold = 480;
 
-function drawLineChart() {
-  if ($("#lineChart").length) {
-    ctxLine = document.getElementById("lineChart").getContext("2d");
-    optionsLine = {
-      scales: {
-        yAxes: [
-          {
-            scaleLabel: {
-              display: true,
-              labelString: "Hits"
+function drawLineChart(xLabels, totalReports, totalClosedReports) {
+    if ($("#lineChart").length) {
+
+        ctxLine = document.getElementById("lineChart").getContext("2d");
+        optionsLine = {
+            plugins: {
+                legend: {
+                    labels: {
+                        font: {
+                            size: 20
+                        }
+                    }
+                }
+            },
+            scales: {
+                yAxes: [
+                    {
+                        scaleLabel: {
+                            display: true,
+                            labelString: "Nombre"
+                        },
+                        ticks: {
+                            fontSize: 20
+                        }
+                    }
+                ],
+                title: {
+                    font: {
+                        size: 20
+                    }
+
+                },
+                xAxes: [
+                    {
+                        ticks: {
+                            fontSize: 20
+                        }
+                    }
+                ]
             }
-          }
-        ]
-      }
-    };
-
-    // Set aspect ratio based on window width
-    optionsLine.maintainAspectRatio =
-      $(window).width() < width_threshold ? false : true;
-
-    configLine = {
-      type: "line",
-      data: {
-        labels: [
-          "January",
-          "February",
-          "March",
-          "April",
-          "May",
-          "June",
-          "July"
-        ],
-        datasets: [
-          {
-            label: "Latest Hits",
-            data: [88, 68, 79, 57, 50, 55, 70],
-            fill: false,
-            borderColor: "rgb(75, 192, 192)",
-            cubicInterpolationMode: "monotone",
-            pointRadius: 0
-          },
-          {
-            label: "Popular Hits",
-            data: [33, 45, 37, 21, 55, 74, 69],
-            fill: false,
-            borderColor: "rgba(255,99,132,1)",
-            cubicInterpolationMode: "monotone",
-            pointRadius: 0
-          },
-          {
-            label: "Featured",
-            data: [44, 19, 38, 46, 85, 66, 79],
-            fill: false,
-            borderColor: "rgba(153, 102, 255, 1)",
-            cubicInterpolationMode: "monotone",
-            pointRadius: 0
-          }
-        ]
-      },
-      options: optionsLine
-    };
-
-    lineChart = new Chart(ctxLine, configLine);
-  }
-}
-
-function drawPieChart() {
-  if ($("#pieChart").length) {
-    var chartHeight = 300;
-
-    $("#pieChartContainer").css("height", chartHeight + "px");
-
-    ctxPie = document.getElementById("pieChart").getContext("2d");
-
-    optionsPie = {
-      responsive: true,
-      maintainAspectRatio: false,
-      layout: {
-        padding: {
-          left: 10,
-          right: 10,
-          top: 10,
-          bottom: 10
         }
-      },
-      legend: {
-        position: "top"
-      }
-    };
+        ;
 
-    configPie = {
-      type: "pie",
-      data: {
-        datasets: [
-          {
-            data: [18.24, 6.5, 9.15],
-            backgroundColor: ["#F7604D", "#4ED6B8", "#A8D582"],
-            label: "Storage"
-          }
-        ],
-        labels: [
-          "Used Storage (18.240GB)",
-          "System Storage (6.500GB)",
-          "Available Storage (9.150GB)"
-        ]
-      },
-      options: optionsPie
-    };
+        // Set aspect ratio based on window width
+        optionsLine.maintainAspectRatio =
+            $(window).width() >= width_threshold;
 
-    pieChart = new Chart(ctxPie, configPie);
-  }
+        configLine = {
+            type: "line",
+            data: {
+                labels: xLabels,
+                datasets: [
+                    {
+                        label: "Signalements traités",
+                        data: [2, 3, 4, 12, totalClosedReports], // oui mdr
+                        fill: true,
+                        backgroundColor: "rgba(139, 21, 56, 0.3)",
+                        borderColor: "rgb(139, 21, 56)",
+                        cubicInterpolationMode: "monotone",
+                        pointRadius: 0
+                    },
+                    {
+                        label: "Signalements reçus",
+                        data: [2, 5, 10, 20, totalReports],
+                        fill: true,
+                        backgroundColor: "rgba(75, 192, 192, 0.3)",
+                        borderColor: "rgb(75, 192, 192)",
+                        cubicInterpolationMode: "monotone",
+                        pointRadius: 0
+                    }
+                ]
+            },
+            options: optionsLine
+        };
+
+        lineChart = new Chart(ctxLine, configLine);
+    }
 }
 
 function updateLineChart() {
-  if (lineChart) {
-    lineChart.options = optionsLine;
-    lineChart.update();
-  }
+    if (lineChart) {
+        lineChart.options = optionsLine;
+        lineChart.update();
+    }
 }

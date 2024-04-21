@@ -84,18 +84,10 @@
             </div>
             <!-- row -->
             <div class="row tm-content-row">
-                <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 tm-block-col">
-                    <div class="tm-bg-primary-dark tm-block">
-                        <h2 class="tm-block-title">Latest Hits</h2>
+                <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 tm-block-col">
+                    <div class="tm-bg-primary-dark tm-block-2">
+                        <h2 class="tm-block-title">Signalements</h2>
                         <canvas id="lineChart"></canvas>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 tm-block-col">
-                    <div class="tm-bg-primary-dark tm-block tm-block">
-                        <h2 class="tm-block-title">Storage Information</h2>
-                        <div id="pieChartContainer">
-                            <canvas id="pieChart" class="chartjs-render-monitor" width="200" height="200"></canvas>
-                        </div>
                     </div>
                 </div>
                 <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 tm-block-col">
@@ -188,6 +180,18 @@
         </footer>
     </div>
 
+    <div class="object-example-container"
+         data-x-labels="{{ xLabels|json_encode() }}"
+    ></div>
+
+    <div id="total-reports" class="string-example-container"
+         data-total-reports="{{ totalReports }}"
+    ></div>
+
+    <div id="total-closed-reports" class="string-example-container"
+         data-total-closed-reports="{{ totalClosedReports }}"
+    ></div>
+
     <script src="{{ asset('lib/jquery-3.3.1.min.js') }}"></script>
     <!-- https://jquery.com/download/ -->
     <script src="{{ asset('lib/moment.min.js') }}"></script>
@@ -197,9 +201,20 @@
     <script src="{{ asset('lib/bootstrap.min.js') }}"></script>
     <!-- https://getbootstrap.com/ bootstrap.min.js-->
     <script src="{{ asset('controllers/tooplate-scripts.js') }}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js" integrity="sha512-u3fPA7V8qQmhBPNT5quvaXVa1mnnLSXUep5PS1qo5NRzHwG19aHmNJnj1Q8hpA/nBWZtZD4r4AX6YOt5ynLN2g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js"
+            integrity="sha512-u3fPA7V8qQmhBPNT5quvaXVa1mnnLSXUep5PS1qo5NRzHwG19aHmNJnj1Q8hpA/nBWZtZD4r4AX6YOt5ynLN2g=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"
+            integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
     <script>
+        const objectExampleData = $('.object-example-container').data('xLabels')
+        console.log(objectExampleData)
+
+        const totalReports = document.getElementById('total-reports').getAttribute('data-total-reports');
+        const totalClosedReports = document.getElementById('total-closed-reports').getAttribute('data-total-closed-reports');
+
         Chart.defaults.global.defaultFontColor = 'white';
+        Chart.defaults.global.fontSize = 20;
         let ctxLine,
             ctxBar,
             ctxPie,
@@ -210,11 +225,10 @@
             configBar,
             configPie,
             lineChart;
-        pieChart;
+
         // DOM is ready
         $(function () {
-            drawLineChart(); // Line Chart
-            drawPieChart(); // Pie Chart
+            drawLineChart(objectExampleData, totalReports, totalClosedReports); // Line Chart
 
             $(window).resize(function () {
                 updateLineChart();

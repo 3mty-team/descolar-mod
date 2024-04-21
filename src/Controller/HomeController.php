@@ -23,17 +23,38 @@ class HomeController extends AbstractController
             return $this->redirectToRoute('login');
         }
 
-        $userReportsCount = sizeof($entityManager->getRepository(UserReport::class)->findOpenReports());
-        $postReportsCount = sizeof($entityManager->getRepository(PostReport::class)->findOpenReports());
-        $messageReportsCount = sizeof($entityManager->getRepository(MessageReport::class)->findOpenReports());
-        $unbanRequestsCount = sizeof($entityManager->getRepository(UnbanRequest::class)->findOpenRequests());
+        $userOpenReports = sizeof($entityManager->getRepository(UserReport::class)->findOpenReports());
+        $postOpenReports = sizeof($entityManager->getRepository(PostReport::class)->findOpenReports());
+        $messageOpenReports = sizeof($entityManager->getRepository(MessageReport::class)->findOpenReports());
+        $unbanOpenRequests = sizeof($entityManager->getRepository(UnbanRequest::class)->findOpenRequests());
+
+        $reportsCount =
+            sizeof($entityManager->getRepository(UserReport::class)->findAll())
+            + sizeof($entityManager->getRepository(PostReport::class)->findAll())
+            + sizeof($entityManager->getRepository(MessageReport::class)->findAll())
+        ;
+
+        $openReportsCount = $reportsCount - $userOpenReports - $postOpenReports - $messageOpenReports
+        ;
+
+        $xLabels = array(
+            "Janvier",
+            "Février",
+            "Mars",
+            "Avril",
+            "Mai"
+        );
+
 
         return $this->render('index.html.twig', [
             'username' => $session->get('username'),
-            'urCount' => $userReportsCount,
-            'prCount' => $postReportsCount,
-            'mrCount' => $messageReportsCount,
-            'ubrCount' => $unbanRequestsCount,
+            'urCount' => $userOpenReports,
+            'prCount' => $postOpenReports,
+            'mrCount' => $messageOpenReports,
+            'ubrCount' => $unbanOpenRequests,
+            'xLabels' => $xLabels,
+            "totalReports" => $reportsCount,
+            "totalClosedReports" => $openReportsCount
         ]);
     }
 }
