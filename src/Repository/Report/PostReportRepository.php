@@ -33,7 +33,7 @@ class PostReportRepository extends ServiceEntityRepository
     }
 
     /**
-     * Populate user_table from Descolar API
+     * Populate reports from Descolar API
      * @param $json
      * @return void
      */
@@ -47,7 +47,6 @@ class PostReportRepository extends ServiceEntityRepository
      * @param User|null $admin
      * @param bool $ignored
      * @param bool $deleted
-     * @param bool $userTimeout
      * @param bool $userBan
      * @return void
      * @throws \Exception

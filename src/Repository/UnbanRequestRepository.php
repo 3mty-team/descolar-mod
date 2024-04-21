@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\UnbanRequest;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -21,28 +22,44 @@ class UnbanRequestRepository extends ServiceEntityRepository
         parent::__construct($registry, UnbanRequest::class);
     }
 
-//    /**
-//     * @return UnbanRequest[] Returns an array of UnbanRequest objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('u')
-//            ->andWhere('u.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('u.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    /**
+     * @return UnbanRequest[]
+     */
+    public function findOpenRequests(): array
+    {
+        return $this->findBy(
+            ['admin_processing' => null]
+        );
+    }
 
-//    public function findOneBySomeField($value): ?UnbanRequest
-//    {
-//        return $this->createQueryBuilder('u')
-//            ->andWhere('u.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    /**
+     * Populate unban request from Descolar API
+     * @param $json
+     * @return void
+     */
+    public function populateDB($json): void
+    {
+
+    }
+
+    /**
+     * @param int|null $id
+     * @param User|null $admin
+     * @param bool $unban
+     * @return void
+     * @throws \Exception
+     */
+    public function closeReport(?int $id, ?User $admin, bool $unban): void
+    {
+        $unbanRequest = $this->find($id);
+
+        $unbanRequest->setAdminProcessing($admin);
+        $unbanRequest->setUnban($unban);
+        $unbanRequest->setResultDate(new \DateTime('', new \DateTimeZone('Europe/Paris')));
+
+        $this->getEntityManager()->persist($unbanRequest);
+        $this->getEntityManager()->flush();
+
+        //TODO Send infos to Descolar API
+    }
 }

@@ -3,12 +3,12 @@
 namespace App\Entity\Report;
 
 use App\Entity\User;
-use App\Repository\Report\PostReportRepository;
+use App\Repository\Report\MessageReportRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: PostReportRepository::class)]
-class PostReport
+#[ORM\Entity(repositoryClass: MessageReportRepository::class)]
+class MessageReport
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -16,14 +16,20 @@ class PostReport
     private ?int $id = null;
 
     #[ORM\Column]
-    private ?int $post_id = null;
+    private ?bool $isGroupMessage = null;
+
+    #[ORM\Column]
+    private ?int $descolarId = null;
+
+    #[ORM\Column(length: 2000)]
+    private ?string $content = null;
 
     #[ORM\Column(type: Types::GUID)]
     private ?string $user_id = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?ReportCategory $report_category = null;
+    private ?ReportCategory $reportCategory = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $date = null;
@@ -54,14 +60,38 @@ class PostReport
         return $this->id;
     }
 
-    public function getPostId(): ?int
+    public function isIsGroupMessage(): ?bool
     {
-        return $this->post_id;
+        return $this->isGroupMessage;
     }
 
-    public function setPostId(int $post_id): static
+    public function setIsGroupMessage(bool $isGroupMessage): static
     {
-        $this->post_id = $post_id;
+        $this->isGroupMessage = $isGroupMessage;
+
+        return $this;
+    }
+
+    public function getDescolarId(): ?int
+    {
+        return $this->descolarId;
+    }
+
+    public function setDescolarId(int $descolarId): static
+    {
+        $this->descolarId = $descolarId;
+
+        return $this;
+    }
+
+    public function getContent(): ?string
+    {
+        return $this->content;
+    }
+
+    public function setContent(string $content): static
+    {
+        $this->content = $content;
 
         return $this;
     }
@@ -80,12 +110,12 @@ class PostReport
 
     public function getReportCategory(): ?ReportCategory
     {
-        return $this->report_category;
+        return $this->reportCategory;
     }
 
-    public function setReportCategory(?ReportCategory $report_category): static
+    public function setReportCategory(?ReportCategory $reportCategory): static
     {
-        $this->report_category = $report_category;
+        $this->reportCategory = $reportCategory;
 
         return $this;
     }

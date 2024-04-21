@@ -2,6 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\UnbanRequest;
+use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -10,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class BanController extends AbstractController
 {
     #[Route('/ban', name: 'ban')]
-    public function index(Request $request): Response
+    public function index(EntityManagerInterface $entityManager, Request $request): Response
     {
         $session = $request->getSession();
 
@@ -18,17 +21,37 @@ class BanController extends AbstractController
             return $this->redirectToRoute('login');
         }
 
+        $unbanRequestRepository = $entityManager->getRepository(UnbanRequest::class)->findOpenRequests();
+
         return $this->render('ban.html.twig', [
-            'username' => $request->getSession()->get('username')
+            'username' => $request->getSession()->get('username'),
+            'unbanRequestsRepository' => $unbanRequestRepository
         ]);
     }
 
-    #[Route('/ban/test', name: 'ban_test')]
-    public function ouai(): Response
+    #[Route('/accept/unban/{id}', name: 'accept_unban')]
+    public function acceptUnban(EntityManagerInterface $entityManager, Request $request, int $id): Response
     {
-        return $this->render('ban-test.html.twig', [
-            'controller_name' => 'ban test là',
-            'message' => "ouai"
-        ]);
+        // Get current logged user
+        $admin = $entityManager->getRepository(User::class)->findOneBy(
+            array('username' => $request->getSession()->get('username'))
+        );
+
+        $entityManager->getRepository(UnbanRequest::class)->closeReport($id, $admin, 1);
+
+        return $this->redirectToRoute('ban');
+    }
+
+    #[Route('/ignore/unban/{id}', name: 'ignore_unban')]
+    public function ignoreUnban(EntityManagerInterface $entityManager, Request $request, int $id): Response
+    {
+        // Get current logged user
+        $admin = $entityManager->getRepository(User::class)->findOneBy(
+            array('username' => $request->getSession()->get('username'))
+        );
+
+        $entityManager->getRepository(UnbanRequest::class)->closeReport($id, $admin, 0);
+
+        return $this->redirectToRoute('ban');
     }
 }
