@@ -7,6 +7,9 @@ function drawLineChart(xLabels, totalReports, totalClosedReports) {
         optionsLine = {
             plugins: {
                 legend: {
+                    font:{
+                        size:20
+                    },
                     labels: {
                         font: {
                             size: 20
@@ -54,7 +57,7 @@ function drawLineChart(xLabels, totalReports, totalClosedReports) {
                 datasets: [
                     {
                         label: "Signalements traités",
-                        data: [2, 3, 4, 12, totalClosedReports], // oui mdr
+                        data: [2, 3, 4, 6, totalClosedReports], // oui mdr
                         fill: true,
                         backgroundColor: "rgba(139, 21, 56, 0.3)",
                         borderColor: "rgb(139, 21, 56)",
@@ -63,7 +66,7 @@ function drawLineChart(xLabels, totalReports, totalClosedReports) {
                     },
                     {
                         label: "Signalements reçus",
-                        data: [2, 5, 10, 20, totalReports],
+                        data: [2, 5, 10, 7, totalReports],
                         fill: true,
                         backgroundColor: "rgba(75, 192, 192, 0.3)",
                         borderColor: "rgb(75, 192, 192)",

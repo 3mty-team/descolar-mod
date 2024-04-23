@@ -809,3 +809,8 @@ input[type="checkbox"]:focus {
 .error-content{
   padding-top:27%;
 }
+
+.blbl{
+  width: 25px;
+  height: 25px;
+}

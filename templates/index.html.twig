@@ -37,7 +37,7 @@
                     <ul class="navbar-nav mx-auto h-100">
                         <li class="nav-item">
                             <a class="nav-link active" href="{{ path("home") }}">
-                                <i class="fas fa-tachometer-alt"></i>
+                                <i class="blbl fas fa-tachometer-alt"></i>
                                 Dashboard
                                 <span class="sr-only">(current)</span>
                             </a>
@@ -47,7 +47,7 @@
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                                data-toggle="dropdown"
                                aria-haspopup="true" aria-expanded="false">
-                                <i class="far fa-file-alt"></i>
+                                <i class="blbl far fa-file-alt"></i>
                                 <span>
                                         Signalements <i class="fas fa-angle-down"></i>
                                     </span>
@@ -60,7 +60,7 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ path("ban") }}">
-                                <i class="fas fa-skull"></i>
+                                <i class="blbl fas fa-skull"></i>
                                 Bannissements
                             </a>
                         </li>
@@ -214,7 +214,6 @@
         const totalClosedReports = document.getElementById('total-closed-reports').getAttribute('data-total-closed-reports');
 
         Chart.defaults.global.defaultFontColor = 'white';
-        Chart.defaults.global.fontSize = 20;
         let ctxLine,
             ctxBar,
             ctxPie,
