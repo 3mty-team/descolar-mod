@@ -2,10 +2,20 @@
 
 namespace App\Repository\Report;
 
+use App\Entity\Report\ReportCategory;
 use App\Entity\Report\UserReport;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\Persistence\ManagerRegistry;
+use Exception;
+use Symfony\Component\HttpClient\HttpClient;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 /**
  * @extends ServiceEntityRepository<UserReport>
@@ -23,13 +33,69 @@ class UserReportRepository extends ServiceEntityRepository
     }
 
     /**
-     * Populate user_table from Descolar API
-     * @param $json
+     * Delete all records from user_report table
+     * @param EntityManagerInterface $entityManager
      * @return void
      */
-    public function populateDB($json): void
+    public function deleteFromTable(EntityManagerInterface $entityManager): void
     {
+        $qb = $entityManager->createQuery('DELETE FROM App\Entity\Report\UserReport');
 
+        $qb->execute();
+    }
+
+    /**
+     * Reset auto_increment of user_report at 1
+     * @param EntityManagerInterface $entityManager
+     * @return void
+     */
+    public function resetAutoIncrement(EntityManagerInterface $entityManager): void
+    {
+        $qb = $entityManager->createNativeQuery("ALTER TABLE user_report AUTO_INCREMENT=1;", new ResultSetMapping());
+
+        $qb->execute();
+    }
+
+    /**
+     * Populate user_table from Descolar API
+     * @return void
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
+    public function populateDB(EntityManagerInterface $entityManager): void
+    {
+        $this->deleteFromTable($entityManager);
+        $this->resetAutoIncrement($entityManager);
+
+        $httpClient = HttpClient::create();
+
+        $response = $httpClient->request('GET', 'https://internal-api.descolar.fr/v1/report/user')->getContent();
+        $response = json_decode($response, true);
+
+        foreach ($response['user_reports'] as $userReport) {
+            $uReport = new UserReport();
+            $uReport->setDescolarId($userReport['id']);
+            $uReport->setUserName($userReport['userReported']['username']);
+            $uReport->setUserUuid($userReport['userReported']['uuid']);
+
+            $rCategory = $entityManager->getRepository(ReportCategory::class)->findCategoryByString($userReport['reportCategory']);
+            $uReport->setReportCategory($rCategory);
+
+            $uReport->setDate(new \DateTime(
+                $userReport['date']['date'],
+                new \DateTimeZone($userReport['date']['timezone'])
+            ));
+
+            $uReport->setComment($userReport['comment']);
+            $uReport->setTreating(0);
+            $uReport->setBanned(0);
+
+            $this->getEntityManager()->persist($uReport);
+            $this->getEntityManager()->flush();
+        }
     }
 
     /**
@@ -37,12 +103,13 @@ class UserReportRepository extends ServiceEntityRepository
      * @param User|null $admin
      * @param bool $result
      * @return void
-     * @throws \Exception
+     * @throws Exception|TransportExceptionInterface
      */
     public function closeReport(?int $id, ?User $admin, bool $result): void
     {
-        $userReport = $this->find($id);
+        $httpClient = HttpClient::create();
 
+        $userReport = $this->find($id);
         $userReport->setTreating(1);
         $userReport->setAdminProcessing($admin);
         $userReport->setBanned($result);
@@ -51,7 +118,15 @@ class UserReportRepository extends ServiceEntityRepository
         $this->getEntityManager()->persist($userReport);
         $this->getEntityManager()->flush();
 
-        //TODO Send infos to Descolar API
+        //Send infos to Descolar API :
+
+        if ($result == 1) { // If User is banned
+            $httpClient->request('PUT', "https://internal-api.descolar.fr/v1/user/disable/forever/{$userReport->getUserUuid()}");
+        }
+
+        // Close report
+        $descolarReportId = $userReport->getDescolarId();
+        $httpClient->request('DELETE', "https://internal-api.descolar.fr/v1/report/user/{$descolarReportId}/delete");
     }
 
     /**
@@ -69,28 +144,4 @@ class UserReportRepository extends ServiceEntityRepository
         return "";
     }
 
-    //    /**
-    //     * @return UserReport[] Returns an array of UserReport objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('u')
-    //            ->andWhere('u.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('u.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?UserReport
-    //    {
-    //        return $this->createQueryBuilder('u')
-    //            ->andWhere('u.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
 }

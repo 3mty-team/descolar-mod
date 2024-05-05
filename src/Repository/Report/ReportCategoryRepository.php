@@ -21,6 +21,15 @@ class ReportCategoryRepository extends ServiceEntityRepository
         parent::__construct($registry, ReportCategory::class);
     }
 
+    public function findCategoryByString(string $name): ?ReportCategory
+    {
+        return $this->createQueryBuilder('category')
+            ->where('category.name = :name')
+            ->setParameter('name', $name)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     //    /**
     //     * @return ReportCategory[] Returns an array of ReportCategory objects
     //     */

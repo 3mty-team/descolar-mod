@@ -9,23 +9,36 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class UserReportController extends AbstractController
 {
+    /**
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ClientExceptionInterface
+     * @throws \Exception
+     */
     #[Route('/report/user', name: 'report_user')]
     public function redirectReportUser(EntityManagerInterface $entityManager, Request $request): Response
     {
         $session = $request->getSession();
-
         if ($session->get('username') == null) {
             return $this->redirectToRoute('login');
         }
 
-        $userReportRepository = $entityManager->getRepository(UserReport::class)->findOpenReports();
+        $userReportRepository = $entityManager->getRepository(UserReport::class);
+        $entityManager->getRepository(UserReport::class)->populateDB($entityManager);
+
+        $openReports = $userReportRepository->findOpenReports();
 
         return $this->render('report/user-report.html.twig', [
             'username' => $session->get('username'),
-            'userReportRepository' => $userReportRepository
+            'openReports' => $openReports
         ]);
     }
 

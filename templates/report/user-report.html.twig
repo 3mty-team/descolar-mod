@@ -92,10 +92,10 @@
                             </tr>
                             </thead>
                             <tbody>
-                            {% for userReport in userReportRepository %}
+                            {% for userReport in openReports %}
                                 <tr>
                                     <td class="tm-product-name"> #{{ userReport.getId() }}</td>
-                                    <td>{{ userReport.getUserId() }}</td>
+                                    <td>{{ userReport.getUserName() }}</td>
                                     <td>{{ userReport.getReportCategory().getName() }}</td>
                                     <td>{{ userReport.getComment() }}</td>
                                     <td>{{ userReport.getDate()|date('d/m/Y H:i', 'Europe/Paris') }}</td>

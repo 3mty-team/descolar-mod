@@ -15,8 +15,14 @@ class UserReport
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\Column(unique: true)]
+    private ?int $descolarId = null;
+
+    #[ORM\Column(length: 150)]
+    private ?string $user_name = null;
+
     #[ORM\Column(type: Types::GUID)]
-    private ?string $user_id = null;
+    private ?string $user_uuid = null;
 
     #[ORM\ManyToOne(cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
@@ -45,16 +51,41 @@ class UserReport
         return $this->id;
     }
 
-    public function getUserId(): ?string
+    public function setId(int $id): static
     {
-        return $this->user_id;
-    }
-
-    public function setUserId(string $user_id): static
-    {
-        $this->user_id = $user_id;
+        $this->id = $id;
 
         return $this;
+    }
+
+    public function getDescolarId(): ?int
+    {
+        return $this->descolarId;
+    }
+
+    public function setDescolarId(?int $descolarId): void
+    {
+        $this->descolarId = $descolarId;
+    }
+
+    public function getUserName(): ?string
+    {
+        return $this->user_name;
+    }
+
+    public function setUserName(?string $user_name): void
+    {
+        $this->user_name = $user_name;
+    }
+
+    public function getUserUuid(): ?string
+    {
+        return $this->user_uuid;
+    }
+
+    public function setUserUuid(?string $user_uuid): void
+    {
+        $this->user_uuid = $user_uuid;
     }
 
     public function getReportCategory(): ?ReportCategory
@@ -144,7 +175,8 @@ class UserReport
     public function toString(): string
     {
         return "Id : " . $this->getId()
-            . ", User : " . $this->getUserId()
+            . ", User uuid : " . $this->getUserUuid()
+            . ", User name : " . $this->getUserName()
             . ", Category : " . $this->getReportCategory()->getName()
             . ", Date : " . $this->getDate()->format('d/m/Y H:i:s')
             . ", Comment : " . (is_null($this->getComment()) ? "null" : $this->getComment())
