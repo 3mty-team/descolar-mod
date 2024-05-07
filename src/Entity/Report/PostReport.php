@@ -15,11 +15,20 @@ class PostReport
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\Column(unique: true)]
+    private ?int $descolarId = null;
+
+    #[ORM\Column]
+    private ?string $post_content = null;
+
     #[ORM\Column]
     private ?int $post_id = null;
 
+    #[ORM\Column(length: 150)]
+    private ?string $user_name = null;
+
     #[ORM\Column(type: Types::GUID)]
-    private ?string $user_id = null;
+    private ?string $user_uuid = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
@@ -54,28 +63,59 @@ class PostReport
         return $this->id;
     }
 
+    public function setId(?int $id): void
+    {
+        $this->id = $id;
+    }
+
+    public function getDescolarId(): ?int
+    {
+        return $this->descolarId;
+    }
+
+    public function setDescolarId(?int $descolarId): void
+    {
+        $this->descolarId = $descolarId;
+    }
+
     public function getPostId(): ?int
     {
         return $this->post_id;
     }
 
-    public function setPostId(int $post_id): static
+    public function setPostId(?int $post_id): void
     {
         $this->post_id = $post_id;
-
-        return $this;
     }
 
-    public function getUserId(): ?string
+    public function getPostContent(): ?string
     {
-        return $this->user_id;
+        return $this->post_content;
     }
 
-    public function setUserId(string $user_id): static
+    public function setPostContent(?string $post_content): void
     {
-        $this->user_id = $user_id;
+        $this->post_content = $post_content;
+    }
 
-        return $this;
+    public function getUserName(): ?string
+    {
+        return $this->user_name;
+    }
+
+    public function setUserName(?string $user_name): void
+    {
+        $this->user_name = $user_name;
+    }
+
+    public function getUserUuid(): ?string
+    {
+        return $this->user_uuid;
+    }
+
+    public function setUserUuid(?string $user_uuid): void
+    {
+        $this->user_uuid = $user_uuid;
     }
 
     public function getReportCategory(): ?ReportCategory
@@ -83,11 +123,9 @@ class PostReport
         return $this->report_category;
     }
 
-    public function setReportCategory(?ReportCategory $report_category): static
+    public function setReportCategory(?ReportCategory $report_category): void
     {
         $this->report_category = $report_category;
-
-        return $this;
     }
 
     public function getDate(): ?\DateTimeInterface
@@ -95,11 +133,9 @@ class PostReport
         return $this->date;
     }
 
-    public function setDate(\DateTimeInterface $date): static
+    public function setDate(?\DateTimeInterface $date): void
     {
         $this->date = $date;
-
-        return $this;
     }
 
     public function getComment(): ?string
@@ -107,23 +143,19 @@ class PostReport
         return $this->comment;
     }
 
-    public function setComment(?string $comment): static
+    public function setComment(?string $comment): void
     {
         $this->comment = $comment;
-
-        return $this;
     }
 
-    public function isTreating(): ?bool
+    public function getTreating(): ?bool
     {
         return $this->treating;
     }
 
-    public function setTreating(bool $treating): static
+    public function setTreating(?bool $treating): void
     {
         $this->treating = $treating;
-
-        return $this;
     }
 
     public function getAdminProcessing(): ?User
@@ -131,47 +163,39 @@ class PostReport
         return $this->admin_processing;
     }
 
-    public function setAdminProcessing(?User $admin_processing): static
+    public function setAdminProcessing(?User $admin_processing): void
     {
         $this->admin_processing = $admin_processing;
-
-        return $this;
     }
 
-    public function isIgnored(): ?bool
+    public function getIgnored(): ?bool
     {
         return $this->ignored;
     }
 
-    public function setIgnored(bool $ignored): static
+    public function setIgnored(?bool $ignored): void
     {
         $this->ignored = $ignored;
-
-        return $this;
     }
 
-    public function isDeleted(): ?bool
+    public function getDeleted(): ?bool
     {
         return $this->deleted;
     }
 
-    public function setDeleted(bool $deleted): static
+    public function setDeleted(?bool $deleted): void
     {
         $this->deleted = $deleted;
-
-        return $this;
     }
 
-    public function isUserBan(): ?bool
+    public function getUserBan(): ?bool
     {
         return $this->user_ban;
     }
 
-    public function setUserBan(bool $user_ban): static
+    public function setUserBan(?bool $user_ban): void
     {
         $this->user_ban = $user_ban;
-
-        return $this;
     }
 
     public function getResultDate(): ?\DateTimeInterface
@@ -179,10 +203,8 @@ class PostReport
         return $this->result_date;
     }
 
-    public function setResultDate(?\DateTimeInterface $result_date): static
+    public function setResultDate(?\DateTimeInterface $result_date): void
     {
         $this->result_date = $result_date;
-
-        return $this;
     }
 }

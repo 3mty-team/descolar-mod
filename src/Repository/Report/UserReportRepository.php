@@ -7,7 +7,6 @@ use App\Entity\Report\UserReport;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Symfony\Component\HttpClient\HttpClient;
@@ -16,7 +15,6 @@ use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
-use function PHPUnit\Framework\isNull;
 
 /**
  * @extends ServiceEntityRepository<UserReport>
@@ -88,7 +86,7 @@ class UserReportRepository extends ServiceEntityRepository
         $httpClient = HttpClient::create();
 
         $userReport = $this->find($id);
-        $userReport->setTreating(1);
+        $userReport->setTreating(true);
         $userReport->setAdminProcessing($admin);
         $userReport->setBanned($result);
         $userReport->setResultDate(new \DateTime('', new \DateTimeZone('Europe/Paris')));
@@ -98,7 +96,7 @@ class UserReportRepository extends ServiceEntityRepository
 
         //Send infos to Descolar API :
 
-        if ($result == 1) { // If User is banned
+        if ($result) { // If User is banned
             $httpClient->request('PUT', "https://internal-api.descolar.fr/v1/user/disable/forever/{$userReport->getUserUuid()}");
         }
 

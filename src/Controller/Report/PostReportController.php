@@ -17,16 +17,18 @@ class PostReportController extends AbstractController
     public function redirectReportPost(EntityManagerInterface $entityManager, Request $request): Response
     {
         $session = $request->getSession();
-
         if ($session->get('username') == null) {
             return $this->redirectToRoute('login');
         }
 
-        $postReportRepository = $entityManager->getRepository(PostReport::class)->findOpenReports();
+        $postReportRepository = $entityManager->getRepository(PostReport::class);
+        $postReportRepository->populateDB($entityManager);
+
+        $openReports = $postReportRepository->findOpenReports();
 
         return $this->render('report/post-report.html.twig', [
             'username' => $session->get('username'),
-            'postReportRepository' => $postReportRepository
+            'openReports' => $openReports
         ]);
     }
 

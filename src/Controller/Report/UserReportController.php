@@ -32,7 +32,7 @@ class UserReportController extends AbstractController
         }
 
         $userReportRepository = $entityManager->getRepository(UserReport::class);
-        $entityManager->getRepository(UserReport::class)->populateDB($entityManager);
+        $userReportRepository->populateDB($entityManager);
 
         $openReports = $userReportRepository->findOpenReports();
 
