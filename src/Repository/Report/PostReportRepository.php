@@ -51,9 +51,9 @@ class PostReportRepository extends ServiceEntityRepository
 
     /**
      * Populate post_report table from Descolar API
+     * @param EntityManagerInterface $entityManager
      * @return void
      * @throws ClientExceptionInterface
-     * @throws DecodingExceptionInterface
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
@@ -87,6 +87,7 @@ class PostReportRepository extends ServiceEntityRepository
                 $pReport->setComment($postReport['comment']);
                 $pReport->setTreating(false);
                 $pReport->setIgnored(false);
+                $pReport->setDeleted(false);
                 $pReport->setUserBan(false);
 
                 $this->getEntityManager()->persist($pReport);
@@ -102,7 +103,7 @@ class PostReportRepository extends ServiceEntityRepository
      * @param bool $deleted
      * @param bool $userBan
      * @return void
-     * @throws \Exception
+     * @throws \Exception|TransportExceptionInterface
      */
     public function closeReport(?int $id, ?User $admin, bool $ignored, bool $deleted, bool $userBan): void
     {

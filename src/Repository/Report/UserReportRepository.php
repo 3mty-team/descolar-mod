@@ -33,9 +33,9 @@ class UserReportRepository extends ServiceEntityRepository
 
     /**
      * Populate user_table from Descolar API
+     * @param EntityManagerInterface $entityManager
      * @return void
      * @throws ClientExceptionInterface
-     * @throws DecodingExceptionInterface
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface

@@ -21,11 +21,14 @@ class MessageReportController extends AbstractController
             return $this->redirectToRoute('login');
         }
 
-        $messageReportRepository = $entityManager->getRepository(MessageReport::class)->findOpenReports();
+        $messageReportRepository = $entityManager->getRepository(MessageReport::class);
+        $messageReportRepository->populateDB($entityManager);
+
+        $openReports = $messageReportRepository->findOpenReports();
 
         return $this->render('report/message-report.html.twig', [
             'username' => $session->get('username'),
-            'messageReportRepository' => $messageReportRepository
+            'openReports' => $openReports
         ]);
     }
 

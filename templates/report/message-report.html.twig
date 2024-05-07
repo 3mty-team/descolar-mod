@@ -94,7 +94,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                            {% for messageReport in messageReportRepository %}
+                            {% for messageReport in openReports %}
                                 <tr>
                                     <td class="tm-product-name"> #{{ messageReport.getId() }}</td>
                                     <td>{{ messageReport.getContent() }}</td>
