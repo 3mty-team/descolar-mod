@@ -16,6 +16,7 @@ use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use function PHPUnit\Framework\isNull;
 
 /**
  * @extends ServiceEntityRepository<UserReport>
@@ -33,30 +34,6 @@ class UserReportRepository extends ServiceEntityRepository
     }
 
     /**
-     * Delete all records from user_report table
-     * @param EntityManagerInterface $entityManager
-     * @return void
-     */
-    public function deleteFromTable(EntityManagerInterface $entityManager): void
-    {
-        $qb = $entityManager->createQuery('DELETE FROM App\Entity\Report\UserReport');
-
-        $qb->execute();
-    }
-
-    /**
-     * Reset auto_increment of user_report at 1
-     * @param EntityManagerInterface $entityManager
-     * @return void
-     */
-    public function resetAutoIncrement(EntityManagerInterface $entityManager): void
-    {
-        $qb = $entityManager->createNativeQuery("ALTER TABLE user_report AUTO_INCREMENT=1;", new ResultSetMapping());
-
-        $qb->execute();
-    }
-
-    /**
      * Populate user_table from Descolar API
      * @return void
      * @throws ClientExceptionInterface
@@ -67,34 +44,35 @@ class UserReportRepository extends ServiceEntityRepository
      */
     public function populateDB(EntityManagerInterface $entityManager): void
     {
-        $this->deleteFromTable($entityManager);
-        $this->resetAutoIncrement($entityManager);
-
         $httpClient = HttpClient::create();
 
         $response = $httpClient->request('GET', 'https://internal-api.descolar.fr/v1/report/user')->getContent();
         $response = json_decode($response, true);
 
         foreach ($response['user_reports'] as $userReport) {
-            $uReport = new UserReport();
-            $uReport->setDescolarId($userReport['id']);
-            $uReport->setUserName($userReport['userReported']['username']);
-            $uReport->setUserUuid($userReport['userReported']['uuid']);
+            $descolarReportId = $userReport['id'];
 
-            $rCategory = $entityManager->getRepository(ReportCategory::class)->findCategoryByString($userReport['reportCategory']);
-            $uReport->setReportCategory($rCategory);
+            if(is_null($this->findByDescolarID($descolarReportId))){ // Check if report is already inside table
+                $uReport = new UserReport();
+                $uReport->setDescolarId($descolarReportId);
+                $uReport->setUserName($userReport['userReported']['username']);
+                $uReport->setUserUuid($userReport['userReported']['uuid']);
 
-            $uReport->setDate(new \DateTime(
-                $userReport['date']['date'],
-                new \DateTimeZone($userReport['date']['timezone'])
-            ));
+                $rCategory = $entityManager->getRepository(ReportCategory::class)->findCategoryByString($userReport['reportCategory']);
+                $uReport->setReportCategory($rCategory);
 
-            $uReport->setComment($userReport['comment']);
-            $uReport->setTreating(0);
-            $uReport->setBanned(0);
+                $uReport->setDate(new \DateTime(
+                    $userReport['date']['date'],
+                    new \DateTimeZone($userReport['date']['timezone'])
+                ));
 
-            $this->getEntityManager()->persist($uReport);
-            $this->getEntityManager()->flush();
+                $uReport->setComment($userReport['comment']);
+                $uReport->setTreating(0);
+                $uReport->setBanned(0);
+
+                $this->getEntityManager()->persist($uReport);
+                $this->getEntityManager()->flush();
+            }
         }
     }
 
@@ -137,6 +115,15 @@ class UserReportRepository extends ServiceEntityRepository
         return $this->findBy(
             ['treating' => 0]
         );
+    }
+
+    public function findByDescolarID(int $descolarId): ?UserReport
+    {
+        $userReport = $this->findOneBy(
+            ['descolarId' => $descolarId]
+        );
+
+       return $userReport;
     }
 
     public function toString(): string
