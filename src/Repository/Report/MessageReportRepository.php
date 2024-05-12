@@ -125,7 +125,7 @@ class MessageReportRepository extends ServiceEntityRepository
         $response = $httpClient->request('GET', 'https://internal-api.descolar.fr/v1/report/groupmessage')->getContent();
         $response = json_decode($response, true);
 
-        foreach ($response['groupmessage_reports'] as $groupMessageReport) {
+        foreach ($response['group_message_reports'] as $groupMessageReport) {
             $descolarReportId = $groupMessageReport['id'];
 
             if (is_null($this->findByDescolarID($descolarReportId))) { // Check if report is already inside table
@@ -171,29 +171,22 @@ class MessageReportRepository extends ServiceEntityRepository
         $httpClient = HttpClient::create();
 
         $messageReport = $this->find($id);
-
-        $messageReport->setTreating(1);
-        $messageReport->setAdminProcessing($admin);
-        $messageReport->setIgnored($ignored);
-        $messageReport->setDeleted($deleted);
-        $messageReport->setUserBan($userBan);
-        $messageReport->setResultDate(new \DateTime('', new \DateTimeZone('Europe/Paris')));
-
-        $this->getEntityManager()->persist($messageReport);
-        $this->getEntityManager()->flush();
-
         $isGroupMessage = $messageReport->getIsGroupMessage();
         $descolarReportId = $messageReport->getDescolarId();
 
         //Send infos to Descolar API :
         if ($userBan) { // If user is banned
-            $httpClient->request('PUT', "https://internal-api.descolar.fr/v1/user/disable/forever/{$messageReport->getUserUuid()}");
+            try {
+                $httpClient->request('PUT', "https://internal-api.descolar.fr/v1/user/disable/forever/{$messageReport->getUserUuid()}");
+            } catch (\Exception $e) {
+                echo $e->getMessage();
+                die();
+            }
         }
 
         if ($isGroupMessage) { // Report concerning a message in a group
             if ($deleted) { // If message is taken down
-                // TODO groupmessage delete link
-                //$httpClient->request('DELETE', "https://internal-api.descolar.fr/v1/message/{$messageReport->getMessageId()}/delete");
+                $httpClient->request('DELETE', "https://internal-api.descolar.fr/v1/group/{$messageReport->getMessageId()}/message");
             }
             // Close report
             $httpClient->request('DELETE', "https://internal-api.descolar.fr/v1/report/groupmessage/{$descolarReportId}/delete");
@@ -204,5 +197,16 @@ class MessageReportRepository extends ServiceEntityRepository
             // Close report
             $httpClient->request('DELETE', "https://internal-api.descolar.fr/v1/report/message/{$descolarReportId}/delete");
         }
+
+
+        $messageReport->setTreating(1);
+        $messageReport->setAdminProcessing($admin);
+        $messageReport->setIgnored($ignored);
+        $messageReport->setDeleted($deleted);
+        $messageReport->setUserBan($userBan);
+        $messageReport->setResultDate(new \DateTime('', new \DateTimeZone('Europe/Paris')));
+
+        $this->getEntityManager()->persist($messageReport);
+        $this->getEntityManager()->flush();
     }
 }
