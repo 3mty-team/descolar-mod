@@ -14,11 +14,13 @@ class EnvManager implements IEnv
 
     /**
      * EnvManager constructor.
+     * @param string $filePath The path of the file
      * @param string $fileName The name of the file to read
      * @param array $envContent The content of the file
      */
     public function __construct(
-        private readonly string $fileName = "/app/descolar-env/",
+        private string          $filePath = "/app/descolar-env/",
+        private readonly string $fileName = "",
         private readonly string $fileExtension = ".env",
         private array           $envContent = []
     )
@@ -26,9 +28,18 @@ class EnvManager implements IEnv
         $this->loadEnv();
     }
 
+    public function setFilePath(string $filePath): self
+    {
+        $this->filePath = $filePath;
+        $this->envContent = [];
+        $this->loadEnv();
+
+        return $this;
+    }
+
     private function getPath(): string
     {
-        return $this->fileName . $this->fileExtension;
+        return $this->filePath . $this->fileName . $this->fileExtension;
     }
 
     private function forEach(Closure $function): void
