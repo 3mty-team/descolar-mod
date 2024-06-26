@@ -5,6 +5,7 @@ namespace App\Repository\Report;
 use App\Entity\Report\PostReport;
 use App\Entity\Report\ReportCategory;
 use App\Entity\User;
+use App\Repository\Report\EnvReader\EnvReader;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -62,7 +63,11 @@ class PostReportRepository extends ServiceEntityRepository
     {
         $httpClient = HttpClient::create();
 
-        $response = $httpClient->request('GET', 'https://internal-api.descolar.fr/v1/report/post')->getContent();
+        $response = $httpClient->request('GET', 'https://internal-api.descolar.fr/v1/report/post', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . EnvReader::getInstance()->get('TOKEN')
+            ]
+        ])->getContent();
         $response = json_decode($response, true);
 
         foreach ($response['post_reports'] as $postReport) {
@@ -123,15 +128,27 @@ class PostReportRepository extends ServiceEntityRepository
 
         //Send infos to Descolar API :
         if ($userBan) { // If user is banned
-            $httpClient->request('PUT', "https://internal-api.descolar.fr/v1/user/disable/forever/{$postReport->getUserUuid()}");
+            $httpClient->request('PUT', "https://internal-api.descolar.fr/v1/user/disable/forever/{$postReport->getUserUuid()}", [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . EnvReader::getInstance()->get('TOKEN')
+                ]
+            ]);
         }
 
         if ($deleted) { // If post is taken down
-            $httpClient->request('DELETE', "https://internal-api.descolar.fr/v1/post/{$postReport->getPostId()}");
+            $httpClient->request('DELETE', "https://internal-api.descolar.fr/v1/post/{$postReport->getPostId()}", [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . EnvReader::getInstance()->get('TOKEN')
+                ]
+            ]);
         }
 
         // Close report
         $descolarReportId = $postReport->getDescolarId();
-        $httpClient->request('DELETE', "https://internal-api.descolar.fr/v1/report/post/{$descolarReportId}/delete");
+        $httpClient->request('DELETE', "https://internal-api.descolar.fr/v1/report/post/{$descolarReportId}/delete", [
+            'headers' => [
+                'Authorization' => 'Bearer ' . EnvReader::getInstance()->get('TOKEN')
+            ]
+        ]);
     }
 }

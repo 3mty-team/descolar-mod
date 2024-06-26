@@ -5,6 +5,7 @@ namespace App\Repository\Report;
 use App\Entity\Report\ReportCategory;
 use App\Entity\Report\UserReport;
 use App\Entity\User;
+use App\Repository\Report\EnvReader\EnvReader;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -44,7 +45,11 @@ class UserReportRepository extends ServiceEntityRepository
     {
         $httpClient = HttpClient::create();
 
-        $response = $httpClient->request('GET', 'https://internal-api.descolar.fr/v1/report/user')->getContent();
+        $response = $httpClient->request('GET', 'https://internal-api.descolar.fr/v1/report/user', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . EnvReader::getInstance()->get('TOKEN')
+            ]
+        ])->getContent();
         $response = json_decode($response, true);
 
         foreach ($response['user_reports'] as $userReport) {
@@ -97,12 +102,20 @@ class UserReportRepository extends ServiceEntityRepository
         //Send infos to Descolar API :
 
         if ($result) { // If User is banned
-            $httpClient->request('PUT', "https://internal-api.descolar.fr/v1/user/disable/forever/{$userReport->getUserUuid()}");
+            $httpClient->request('PUT', "https://internal-api.descolar.fr/v1/user/disable/forever/{$userReport->getUserUuid()}", [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . EnvReader::getInstance()->get('TOKEN')
+                ]
+            ]);
         }
 
         // Close report
         $descolarReportId = $userReport->getDescolarId();
-        $httpClient->request('DELETE', "https://internal-api.descolar.fr/v1/report/user/{$descolarReportId}/delete");
+        $httpClient->request('DELETE', "https://internal-api.descolar.fr/v1/report/user/{$descolarReportId}/delete", [
+            'headers' => [
+                'Authorization' => 'Bearer ' . EnvReader::getInstance()->get('TOKEN')
+            ]
+        ]);
     }
 
     /**
