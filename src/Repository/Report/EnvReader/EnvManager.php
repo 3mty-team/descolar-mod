@@ -19,7 +19,7 @@ class EnvManager implements IEnv
      * @param array $envContent The content of the file
      */
     public function __construct(
-        private readonly string $filePath = "/env/descolar-env/",
+        private readonly string $filePath = "/env/",
         private readonly string $fileName = "",
         private readonly string $fileExtension = ".env",
         private array           $envContent = []
