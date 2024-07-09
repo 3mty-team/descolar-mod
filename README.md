@@ -19,9 +19,9 @@ Download links:
         - https://git.jetbrains.space/3mty/descolar/descolar-mod.git
 - GitHub
     - **SSH clone URL:**
-        - website
+        - ```git@github.com:3mty-team/descolar-mod.git```
     - **HTTPS clone URL:**
-        - website
+        - https://github.com/3mty-team/descolar-mod.git
 
     
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
